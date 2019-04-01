@@ -1,0 +1,59 @@
+---
+title: "AFM 423 - Group Project 2"
+author: "Weixuan Xu 20568320"
+date: "March 26, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+gc()
+rm(list = ls())
+```
+
+
+```{r}
+library(ggplot2)
+library(ISLR)
+library(dplyr)
+library(tidyr)
+library(pander)
+library(forcats)
+library(DMwR)
+library(ROSE)
+library(caret)
+
+train = data.frame(read.csv("training.csv"))
+train_clean = read.csv("training_cleaned.csv")
+train$VehicleAge = as.factor(train$VehicleAge)
+train$IsBadBuy = as.factor(train$IsBadBuy)
+
+# 0. EDA
+# Skip
+
+# Prep 1: SMOTE
+train_smote = SMOTE(IsBadBuy ~ ., data = train, perc.over = 200)
+summary(train_smote$IsBadBuy)
+
+# PREP 2: Split
+set.seed(42)
+train_idx = createDataPartition(train$IsBadBuy, p = 0.70, list = FALSE)
+train_smote_idx = createDataPartition(train_smote$IsBadBuy, p = 0.70, list = FALSE)
+
+train_idx_trn = train[train_idx, ]
+train_idx_tst = train[-train_idx, ]
+
+train_smote_idx_trn = train_smote[train_smote_idx, ]
+train_smote_idx_tst = train_smote[-train_smote_idx, ]
+
+# 1. Remove Unwanted Columns
+# 2. Distribution of Results
+# 3. Distribution of Variables
+# 4. Create oversampling 
+# 5. Model Implementation
+#   5.1 Linear
+#   5.2 KNN
+#   5.3 LDA
+#   5.4 QDA
+
+```
