@@ -23,17 +23,27 @@ library(DMwR)
 library(ROSE)
 library(caret)
 
+
+# 0. EDA (Aaron's Part)
+#   0.0 Distribution of Results
+#   0.1 Distribution of Variables
+
+
+
+# 1. Remove Unwanted Columns
+# Done?
+
+
+
+# Prep 0: Read CSV
 train = data.frame(read.csv("training.csv"))
 train_clean = read.csv("training_cleaned.csv")
 train$VehicleAge = as.factor(train$VehicleAge)
 train$IsBadBuy = as.factor(train$IsBadBuy)
 
-# 0. EDA
-# Skip
 
 # Prep 1: SMOTE
 train_smote = SMOTE(IsBadBuy ~ ., data = train, perc.over = 200)
-summary(train_smote$IsBadBuy)
 
 # PREP 2: Split
 set.seed(42)
@@ -46,14 +56,21 @@ train_idx_tst = train[-train_idx, ]
 train_smote_idx_trn = train_smote[train_smote_idx, ]
 train_smote_idx_tst = train_smote[-train_smote_idx, ]
 
-# 1. Remove Unwanted Columns
-# 2. Distribution of Results
-# 3. Distribution of Variables
-# 4. Create oversampling 
-# 5. Model Implementation
-#   5.1 Linear
-#   5.2 KNN
-#   5.3 LDA
-#   5.4 QDA
+
+
+# 2. Model Implementation
+#   2.1 Linear
+#   2.2 KNN
+#   2.3 LDA
+#   2.4 QDA
+#   2.5 ...More from Daniel
+
+
+# 3. Model Comparison with Scores/Curves/Measures
+
+
+# 4. Conclusion
+
+# 5. Feedback
 
 ```
