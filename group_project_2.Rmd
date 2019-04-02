@@ -42,19 +42,20 @@ train$VehicleAge = as.factor(train$VehicleAge)
 train$IsBadBuy = as.factor(train$IsBadBuy)
 
 
-# Prep 1: SMOTE
-train_smote = SMOTE(IsBadBuy ~ ., data = train, perc.over = 200)
 
-# PREP 2: Split
+# PREP 1: Split
 set.seed(42)
 train_idx = createDataPartition(train$IsBadBuy, p = 0.70, list = FALSE)
-train_smote_idx = createDataPartition(train_smote$IsBadBuy, p = 0.70, list = FALSE)
 
 train_idx_trn = train[train_idx, ]
 train_idx_tst = train[-train_idx, ]
 
-train_smote_idx_trn = train_smote[train_smote_idx, ]
-train_smote_idx_tst = train_smote[-train_smote_idx, ]
+
+# Prep 2: SMOTE
+
+trn_smote = SMOTE(IsBadBuy ~ ., data = train_idx_trn, perc.over = 200)
+tst_smote = SMOTE(IsBadBuy ~ ., data = train_idx_tst, perc.over = 200)
+
 
 
 
