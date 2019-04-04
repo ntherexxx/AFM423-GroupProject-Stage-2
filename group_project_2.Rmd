@@ -38,7 +38,7 @@ library(data.table)
 
 
 # Prep 0: Read CSV
-train = data.frame(read.csv("training.csv"))
+train = data.frame(read.csv("training_cleaned.csv"))
 train$VehicleAge = as.factor(train$VehicleAge)
 train$IsBadBuy = as.factor(train$IsBadBuy)
 train$Make = as.factor(train$Make)
@@ -117,15 +117,12 @@ train$MMRCurrentAuctionCleanPrice = as.numeric(train$MMRCurrentAuctionCleanPrice
 train$MMRCurrentRetailAveragePrice = as.numeric(train$MMRCurrentRetailAveragePrice)
 train$MMRCurrentRetailCleanPrice = as.numeric(train$MMRCurrentRetailCleanPrice)
 
-train$AvgPrice = mean(cbind(train$MMRAcquisitionAuctionAveragePrice,
-train$MMRAcquisitionAuctionCleanPrice,
-train$MMRAcquisitionRetailAveragePrice,
-train$MMRAcquisitonRetailCleanPrice,
-train$MMRCurrentAuctionAveragePrice,
-train$MMRCurrentAuctionCleanPrice,
-train$MMRCurrentRetailAveragePrice,
-train$MMRCurrentRetailCleanPrice))
+train$AvgPrice = (rowMeans(train[,10:17]))
 
+
+# train$VehBCost = as.factor(train$VehBCost)
+# train$WarrantyCost = as.factor(train$WarrantyCost)
+train$BYRNO = as.factor(train$BYRNO)
 
 train$MMRAcquisitionAuctionAveragePrice = NULL
 train$MMRAcquisitionAuctionCleanPrice = NULL
@@ -135,6 +132,18 @@ train$MMRCurrentAuctionAveragePrice = NULL
 train$MMRCurrentAuctionCleanPrice = NULL
 train$MMRCurrentRetailAveragePrice = NULL
 train$MMRCurrentRetailCleanPrice = NULL
+train$PurchMonth = NULL
+train$PurchYear = NULL
+train$DoorCount = NULL
+train$BYRNO = NULL
+
+
+
+cols = seq(1:11)    
+train[,cols] = apply(train[,cols], 2, function(x) as.numeric(as.factor(x)))
+train$IsBadBuy = as.factor(train$IsBadBuy)
+
+
 
 # PREP 1: Split
 set.seed(42)
@@ -143,11 +152,11 @@ train_idx = createDataPartition(train$IsBadBuy, p = 0.70, list = FALSE)
 trn = train[train_idx, ]
 tst = train[-train_idx, ]
 
-plot(train$VehOdo)
-
 # Prep 2: SMOTE
 trn_smote = SMOTE(IsBadBuy ~ ., data = trn, perc.over = 200)
 tst_smote = SMOTE(IsBadBuy ~ ., data = tst, perc.over = 200)
+
+
 
 # 2. Model Implementation
 #   2.1 Logistic
@@ -166,15 +175,17 @@ accuracy = function(actual, predicted) {
 }
 
 accuracy(actual = tst_smote$IsBadBuy,
-         predicted =predict(default_glm_mod, tst_smote))
+         predicted = predict(default_glm_mod, tst_smote))
 
 #   2.2 KNN
-
 
 
 #   2.3 LDA
 
 default_lda_mod = lda(IsBadBuy ~ ., data = trn_smote)
+
+accuracy(actual = tst_smote$IsBadBuy,
+         predicted = predict(default_lda_mod, data = tst_smote))
 
 
 #   2.4 QDA
